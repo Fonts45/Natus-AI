@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Natus | ChatBoot</title>
+<script>
+if (location.protocol === 'file:') location.replace('http://127.0.0.1:8790/');
+</script>
+<link rel="icon" type="image/svg+xml" href="/favicon-natu-vale-circular.svg?v=3">
+<link rel="preload" as="image" href="/logo-carregamento.svg">
+<meta name="theme-color" content="#215037">
+<link rel="stylesheet" href="/interface/fonts.css">
+<style>
+:root{font:16px system-ui,sans-serif;color:#173229;background:#edf2ef;--forest:#123e2e;--line:#d9e4dc}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+button,input,select,textarea{font:inherit}
+button,select,input,textarea{border:1px solid #a7bdb0;border-radius:9px;padding:.65rem .85rem}
+button{cursor:pointer;background:white;color:var(--forest);font-weight:650}
+button:hover{background:#e3eee7}
+.primary{background:var(--forest);color:white;border-color:var(--forest)}
+.primary:hover{background:#246349}
+header{background:var(--forest);color:white;display:flex;justify-content:space-between;align-items:center;padding:1rem clamp(1rem,4vw,3rem);gap:1rem}
+header strong{font-size:1.4rem}
+header span{margin-left:.65rem}
+h1,h2,p{margin:0}
+main{max-width:1380px;margin:auto;padding:clamp(1rem,3vw,2.5rem)}
+#login{max-width:420px;margin:5vh auto;background:white;padding:2rem;border-radius:16px;display:grid;gap:1rem}
+label{display:grid;gap:.3rem}
+#workspace{display:grid;grid-template-columns:minmax(240px,320px) minmax(0,1fr);gap:1rem}
+aside,article{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.section,#messages,#composer,#demo{padding:1rem}
+.section{display:grid;gap:.75rem;border-bottom:1px solid var(--line)}
+#queue button{width:100%;border:0;border-radius:0;border-bottom:1px solid var(--line);display:grid;text-align:left;gap:.25rem}
+#queue button[aria-pressed=true]{background:#e1efe5;box-shadow:inset 4px 0 #358454}
+small,#status{color:#4e6458}
+#messages{display:flex;flex-direction:column;gap:.65rem;background:#f4f7f4;height:clamp(250px,43vh,550px);overflow:auto}
+.message{background:white;border:1px solid var(--line);padding:.65rem .9rem;border-radius:12px;max-width:90%;align-self:flex-start}
+.message.out{background:#dbeddf;align-self:flex-end}
+.message p{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:.25rem}
+.actions,#composer,.demo-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+textarea{flex:1;min-width:160px;resize:vertical}
+#demo{border-top:1px solid var(--line)}
+#automation { margin-top: 1rem; padding: clamp(1rem, 3vw, 2rem); }
+#automation form, #automation fieldset { display: grid; gap: .85rem; }
+#automation fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+#automation textarea { width: 100%; }
+#automation .switch { display: flex; align-items: center; gap: .55rem; }
+#automation [aria-pressed="true"] { background: #e7f0ea; }
+#automation-feedback { min-height: 1.5em; }
+summary{display:flex;align-items:center;gap:.7rem;list-style:none;cursor:pointer;margin-bottom:.65rem;border-radius:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:"";
+  flex:none;
+  width:.85rem;
+  height:.85rem;
+  background:center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23215037' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+details[open]>summary::after{transform:rotate(180deg)}
+@media (prefers-reduced-motion: no-preference) {
+  summary::after { transition: transform 200ms ease; }
+  details::details-content {
+    opacity: 0;
+    transition: opacity 200ms ease, content-visibility 200ms allow-discrete;
+  }
+  details[open]::details-content { opacity: 1; }
+}
+summary:focus{outline:none}
+summary:focus-visible{background:#e7f0ea}
+#error{color:#862920;margin-bottom:.8rem}
+@media(max-width:680px){#workspace{grid-template-columns:1fr}#queue{max-height:180px;overflow:auto}header span{display:block;margin:0}#messages{height:38vh}}
+:root {
+  font-family: var(--natus-font);
+  color: #28382f;
+  background: #f2f4f1;
+  --forest: #215037;
+  --line: rgba(33, 80, 55, .12);
+  --shadow: 0 1px 2px rgba(19, 37, 28, .05), 0 22px 50px -18px rgba(19, 37, 28, .22);
+}
+body {
+  min-height: 100dvh;
+  line-height: 1.5;
+  background: radial-gradient(1100px 520px at 50% -8%, rgba(33, 80, 55, .10), transparent 65%) fixed;
+}
+main { padding: clamp(16px, 6vh, 64px) 16px 24px; }
+main:has(#welcome:not([hidden])) { max-width: none; padding: 0; }
+header { background: #fff; color: #215037; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: .75rem; }
+.brand img { width: 38px; height: auto; }
+#account { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: .5rem; overflow-wrap: anywhere; }
+#agent { margin: 0; }
+#login, aside, article {
+  background: #fff;
+  border: 1px solid rgba(33, 80, 55, .06);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+#login { width: 100%; max-width: 480px; padding: 32px 32px 28px; margin: 0 auto; gap: 12px; }
+.login-logo { display: block; width: 104px; height: auto; margin: 0 auto 6px; }
+#login h2 { text-align: center; color: #215037; font-size: clamp(24px, 6.4vw, 30px); font-weight: 900; line-height: 1.15; }
+.login-subtitle { text-align: center; color: #5c685f; margin: 0 0 8px; }
+h2 { font-size: 17px; font-weight: 800; color: #13251c; }
+label { font-weight: 800; }
+button, select, input, textarea { border: 1.5px solid rgba(33, 80, 55, .28); border-radius: 14px; color: #13251c; }
+input, textarea, select { padding: 12px 16px; min-width: 0; background: #fff; }
+input, textarea, select {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+:where(input, textarea, select, button):focus-visible {
+  outline: 3px solid rgba(33, 80, 55, .36);
+  outline-offset: 2px;
+}
+button { color: #215037; font-weight: 800; }
+button:hover { background: #f3f7f4; }
+.primary {
+  min-height: 46px;
+  color: #fff;
+  background: linear-gradient(180deg, #2b6546, #215037 55%, #183d2a);
+  box-shadow: 0 8px 18px -8px rgba(33, 80, 55, .6);
+}
+.primary:hover { background: #183d2a; }
+#login .primary { min-height: 52px; letter-spacing: .08em; font-weight: 900; }
+#messages { background: #f3f7f4; }
+.message.out, #queue button[aria-pressed=true] { background: #e7f0ea; }
+#error { max-width: 480px; margin: 0 auto 12px; padding: 12px 14px; background: #fef3f2; color: #a91f16; border-radius: 12px; }
+@media (max-width:480px) { #login { padding: 24px 20px 22px; border-radius: 20px; } }
+#welcome { background: #fff; color: #215037; }
+.home-wrap { width: min(1120px, calc(100% - 2.5rem)); margin-inline: auto; }
+.home-nav { background: #fff; border-bottom: 1px solid var(--line); padding: 0; }
+.home-nav .home-wrap, .home-nav nav, .home-brand, .home-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(.55rem, 2vw, 1.5rem);
+}
+.home-nav .home-wrap { justify-content: space-between; flex-wrap: wrap; padding-block: .9rem; }
+.home-nav nav, .home-actions { flex-wrap: wrap; }
+.home-brand { gap: .65rem; font-size: 1.45rem; font-weight: 900; }
+.home-brand img { width: 36px; height: auto; }
+.home-nav a, .home-actions a { color: inherit; text-decoration: none; font-weight: 800; }
+.home-nav a:hover, .home-actions a:hover { text-decoration: underline; text-underline-offset: .2em; }
+#welcome .home-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: .6rem 1rem;
+  border-radius: 999px;
+  background: #215037;
+  color: #fff;
+  text-decoration: none;
+}
+#welcome .home-button:hover { background: #183d2a; }
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+  padding-block: clamp(3rem, 9vw, 7rem);
+}
+.home-hero h1 {
+  max-width: 13ch;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  line-height: 1.03;
+  letter-spacing: -.055em;
+  font-weight: 900;
+}
+.home-hero p { max-width: 48ch; margin-block: 1.25rem 1.65rem; font-size: clamp(1rem, 2vw, 1.25rem); }
+.home-preview { margin: 0; padding: clamp(1.25rem, 3vw, 2.25rem); border-radius: 32px; background: #215037; color: #fff; }
+.home-preview figcaption { display: flex; gap: .6rem; align-items: center; margin-bottom: 1rem; font-weight: 800; }
+.home-preview figcaption::before { content: ""; width: .65rem; height: .65rem; border-radius: 50%; background: #00d756; }
+.home-preview ol { display: grid; gap: .7rem; margin: 0; padding: 0; list-style: none; }
+.home-preview li { padding: .85rem 1rem; border-radius: 15px; background: #fff; color: #215037; }
+.home-preview li:nth-child(2) { background: #F0ECE5; }
+.home-preview li strong { display: block; }
+.home-preview li span { font-size: .9rem; }
+.home-section { padding-block: clamp(2.75rem, 7vw, 5rem); }
+.home-section h2 { margin-bottom: 1.25rem; color: #215037; font-size: clamp(1.65rem, 3vw, 2.3rem); font-weight: 900; }
+.home-resources { background: #F0ECE5; }
+.home-topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.home-topic { background: #fff; border-radius: 20px; padding: 1.3rem; }
+.home-topic h3 { margin: 0 0 .45rem; font-size: 1.15rem; }
+.home-topic p { font-size: .95rem; }
+#access { padding-inline: 1.25rem; }
+#login-error { padding: .7rem; border-radius: 12px; background: #fef3f2; color: #a91f16; }
+@media (max-width: 720px) {
+  .home-hero, .home-topics { grid-template-columns: 1fr; }
+}
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #215037;
+  transition: opacity .45s ease, visibility .45s;
+}
+#loading-screen.is-ready { opacity: 0; visibility: hidden; pointer-events: none; }
+#loading-screen img {
+  width: clamp(72px, 18vw, 104px);
+  height: auto;
+  animation: loading-pulse 1.6s ease-in-out infinite;
+}
+#loading-screen.is-ready img { animation: none; }
+.status-filter { position: relative; display: grid; gap: .3rem; }
+.status-filter > span { font-weight: 800; }
+.status-filter summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  list-style: none;
+  margin: 0;
+  padding: .75rem 1rem;
+  border: 1.5px solid rgba(33, 80, 55, .28);
+  border-radius: 18px;
+  font-weight: 800;
+}
+.status-options {
+  position: absolute;
+  inset: calc(100% + .35rem) 0 auto;
+  z-index: 5;
+  display: grid;
+  gap: .2rem;
+  padding: .4rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+.status-options button { border: 0; border-radius: 13px; text-align: left; }
+.status-options button[aria-pressed="true"] { background: #e7f0ea; }
+#workspace > aside { overflow: visible; }
+#queue { overflow: hidden; border-radius: 0 0 24px 24px; }
+#search { width: 100%; }
+#queue .unread { justify-self: start; padding: 2px 9px; border-radius: 999px; background: #215037; color: white; }
+#quick-replies { padding: .75rem 1rem; border-top: 1px solid var(--line); }
+@media(max-width:680px) { #queue { overflow: auto; } }
+@keyframes loading-pulse { 50% { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) {
+  #loading-screen { transition: none; }
+  #loading-screen img { animation: none; }
+}
+
+/* Área de atendimento da Natu Vale */
+#topbar {
+  gap: .8rem 1.5rem;
+  padding: .65rem clamp(.85rem, 3vw, 2.4rem);
+  background: #215037;
+  color: #fff;
+}
+#topbar .brand strong, .inbox-controls h2, #contact, #empty-chat h2, #automation h2 {
+  font-size: clamp(1.5rem, 2vw, 1.8rem);
+  line-height: 1.1;
+}
+#topbar .brand img { width: 41px; }
+#topbar .brand strong, #topbar .brand small { display: block; }
+#topbar .brand small { color: #F0ECE5; }
+#topbar :is(#open-automation, #logout) {
+  min-height: 42px;
+  background: transparent;
+  border: 1px solid #ffffff66;
+  color: #fff;
+}
+#topbar :is(#open-automation, #logout):hover,
+#topbar #open-automation[aria-expanded="true"] { background: #ffffff20; }
+#topbar :focus-visible { outline-color: #F0ECE5; }
+#agent { font-size: .875rem; }
+main:has(#workspace:not([hidden])) { max-width: 1560px; padding: 1rem clamp(.75rem, 2.5vw, 2rem); }
+#workspace {
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: .85rem;
+  min-height: 35rem;
+  height: calc(100dvh - 6.75rem);
+}
+#workspace > :is(aside, article) {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 21px;
+  box-shadow: 0 8px 24px #0034190d;
+}
+.inbox-controls { gap: .65rem; }
+.inbox-controls h2 { color: #215037; }
+#whatsapp-channel { font-size: .81rem; overflow-wrap: anywhere; }
+.search-field { position: relative; }
+.search-field::before {
+  content: "";
+  position: absolute;
+  inset: .95rem auto auto 1rem;
+  width: .82rem;
+  height: .82rem;
+  border: 1.5px solid #215037;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.search-field::after {
+  content: "";
+  position: absolute;
+  inset: 1.68rem auto auto 1.69rem;
+  width: .4rem;
+  border-top: 1.5px solid #215037;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+#search { padding: .65rem .85rem .65rem 2.5rem; background: #F0ECE5; border-color: transparent; }
+#filter > summary { padding: .55rem .8rem; border-radius: 12px; }
+.inbox-filters { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: .45rem; }
+.inbox-filters button { font-size: .875rem; }
+#unread-filter { min-height: 43px; }
+#unread-filter[aria-pressed="true"] { background: #215037; color: #fff; }
+#queue { flex: 1; max-height: none; overflow: auto; overscroll-behavior: contain; padding: .45rem; }
+#queue button {
+  display: grid;
+  grid-template-columns: 2.55rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .65rem;
+  padding: .7rem .55rem;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  min-width: 0;
+}
+#queue button[aria-pressed="true"] { background: #e6efe9; border-color: #21503726; box-shadow: none; }
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  border-radius: 12px;
+  background: #F0ECE5;
+  color: #215037;
+  font-size: .875rem;
+  font-weight: 900;
+}
+.queue-copy, .queue-meta { display: grid; gap: .1rem; min-width: 0; }
+.queue-copy :is(strong, small) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.queue-meta { justify-items: end; font-variant-numeric: tabular-nums; }
+.queue-meta time { color: #4e6458; font-size: .8125rem; }
+#queue .unread { justify-self: end; min-width: 1.4rem; padding: 0 .35rem; text-align: center; }
+.queue-empty { padding: .85rem; color: #4e6458; }
+.chat-heading { grid-template-columns: auto minmax(0, 1fr); align-items: center; }
+#contact { color: #215037; overflow-wrap: anywhere; }
+#status { font-size: .875rem; overflow-wrap: anywhere; }
+#actions { grid-column: 1 / -1; }
+#actions:has(> :not([hidden])) { margin-top: .1rem; }
+#actions:not(:has(> :not([hidden]))) { display: none; }
+#actions button { min-height: 40px; padding: .5rem .75rem; }
+#back-to-inbox { display: none; }
+.chat-stage { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F0ECE5; }
+#empty-chat {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  align-content: center;
+  flex: 1;
+  padding: 1.25rem;
+  text-align: center;
+  background: radial-gradient(circle at center, #21503716 1px, transparent 1.4px) center / 16px 16px;
+}
+#empty-chat img { width: 64px; height: auto; margin-bottom: .9rem; }
+#empty-chat p { margin-top: .35rem; color: #4e6458; }
+#messages {
+  flex: 1;
+  min-height: 6rem;
+  height: auto;
+  padding: clamp(.85rem, 2.5vw, 1.75rem);
+  background: transparent;
+  overscroll-behavior: contain;
+}
+.message { max-width: min(85%, 42rem); border: 0; border-radius: 5px 17px 17px 17px; }
+.message.out { background: #e1ece5; border-radius: 17px 5px 17px 17px; }
+.message small, .chat-date { font-size: .8125rem; }
+.chat-date { align-self: center; padding: .2rem .65rem; border-radius: 999px; background: #fff; color: #215037; }
+#composer { border-top: 1px solid var(--line); background: #fff; align-items: stretch; }
+#composer textarea { flex-basis: 12rem; min-width: 0; max-height: 9rem; }
+#quick-replies { padding-block: .5rem; }
+#quick-replies button { padding: .35rem .65rem; border-radius: 999px; font-size: .875rem; }
+#demo { padding-block: .5rem; background: #faf8f5; }
+#demo textarea { flex-basis: 12rem; min-width: 0; max-height: 7rem; }
+#demo button { font-size: .875rem; }
+#automation { max-width: 60rem; margin-inline: auto; }
+@media (max-width: 720px) {
+  #topbar { flex-wrap: wrap; }
+  #agent { max-width: 100%; }
+  #workspace { grid-template-columns: minmax(0, 1fr); height: auto; min-height: calc(100dvh - 9rem); }
+  #workspace[data-view="inbox"] > article, #workspace[data-view="chat"] > aside { display: none; }
+  #queue { max-height: 65dvh; }
+  #workspace[data-view="chat"] #back-to-inbox { display: inline-flex; }
+  .chat-heading { grid-template-columns: auto auto minmax(0, 1fr); }
+  #messages { flex: none; height: clamp(11rem, 38dvh, 35rem); }
+  #demo button { flex: 1 1 auto; }
+}
+</style>
+<noscript><style>#loading-screen{display:none!important}</style></noscript>
+<div id="loading-screen" role="status" aria-label="Carregando Natus">
+  <img src="/logo-carregamento.svg" alt="">
+</div>
+<header id="topbar" hidden>
+  <div class="brand"><img src="/logo-carregamento.svg" alt="Natu Vale" width="104" height="112"><div><strong>Natus</strong><small>Painel de atendimento</small></div></div>
+  <div id="account">
+    <button type="button" id="open-automation" aria-controls="automation" aria-expanded="false" hidden>Configurar respostas</button>
+    <span id="agent"></span>
+    <button type="button" id="logout">Sair</button>
+  </div>
+</header>
+<main>
+<p id="error" role="alert" hidden></p>
+<div id="welcome">
+  <header class="home-nav">
+    <div class="home-wrap">
+      <a class="home-brand" href="#inicio"><img src="/logo-natu-vale.png" alt="Natu Vale" width="480" height="515">Natus</a>
+      <nav aria-label="Navegação principal">
+        <a href="#inicio">Início</a>
+        <a href="#recursos">Recursos</a>
+        <a class="home-button" href="#login">Login</a>
+      </nav>
+    </div>
+  </header>
+  <section class="home-hero home-wrap" id="inicio">
+    <div>
+      <h1>Atendimento da Natu Vale em um só lugar</h1>
+      <p>O Natus guia o primeiro contato. A equipe acompanha a fila, assume conversas e responde pelo painel.</p>
+      <div class="home-actions">
+        <a class="home-button" href="#login">Acessar o painel</a>
+        <a href="/interface/">Ver demonstração da interface</a>
+        <a href="#recursos">Ver recursos</a>
+      </div>
+    </div>
+    <figure class="home-preview">
+      <figcaption>Fluxo de atendimento pelo WhatsApp</figcaption>
+      <ol>
+        <li><strong>Primeiro contato</strong><span>O cliente escolhe uma opção no menu do Natus.</span></li>
+        <li><strong>Fila de atendimento</strong><span>A solicitação fica disponível com seu histórico.</span></li>
+        <li><strong>Atendimento humano</strong><span>A equipe assume e responde pelo painel.</span></li>
+      </ol>
+    </figure>
+  </section>
+  <section class="home-section home-resources" id="recursos">
+    <div class="home-wrap">
+      <h2>Recursos do ChatBoot</h2>
+      <div class="home-topics">
+        <div class="home-topic"><h3>Menu automático</h3><p>Oriente clientes sobre uniformes, produtos personalizados e acompanhamento de pedidos.</p></div>
+        <div class="home-topic"><h3>Fila compartilhada</h3><p>Encontre conversas por status ou busca e veja suas mensagens não lidas.</p></div>
+        <div class="home-topic"><h3>Respostas rápidas</h3><p>Use mensagens prontas para saudar clientes, solicitar dados ou agradecer.</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="home-section" id="access" aria-label="Acesso da equipe">
+<form id="login">
+<img class="login-logo" src="/logo-natu-vale.png" alt="Natu Vale" width="480" height="515">
+<h2>Entrar no painel</h2>
+<p class="login-subtitle">Plataforma ChatBoot</p>
+<p id="login-error" role="alert" hidden></p>
+<label>Usuário<input name="name" autocomplete="username" required></label>
+<label>Senha<input name="password" type="password" autocomplete="current-password" required></label>
+<button class="primary">Entrar</button>
+</form>
+  </section>
+</div>
+<div id="workspace" data-view="inbox" hidden>
+<aside aria-label="Fila de atendimento">
+<div class="section inbox-controls">
+  <h2>Conversas</h2>
+  <small id="whatsapp-channel"></small>
+  <div class="search-field"><input id="search" type="search" aria-label="Buscar conversas" placeholder="Buscar conversas"></div>
+  <div class="inbox-filters">
+  <div class="status-filter">
+    <span id="filter-label">Status</span>
+    <details id="filter">
+      <summary aria-labelledby="filter-label filter-current"><span id="filter-current">Todos</span></summary>
+      <div class="status-options" role="group" aria-labelledby="filter-label">
+        <button type="button" data-status="" aria-pressed="true">Todos</button>
+        <button type="button" data-status="pendente" aria-pressed="false">Pendentes</button>
+        <button type="button" data-status="humano" aria-pressed="false">Em atendimento humano</button>
+        <button type="button" data-status="natus" aria-pressed="false">Com o Natus</button>
+        <button type="button" data-status="resolvido" aria-pressed="false">Resolvidas</button>
+      </div>
+    </details>
+  </div>
+  <button type="button" id="unread-filter" aria-pressed="false">Não lidas</button>
+  </div>
+</div>
+<div id="queue"></div>
+</aside>
+<article aria-label="Conversa">
+<div class="section chat-heading" id="chat-heading" hidden>
+<button type="button" id="back-to-inbox">Conversas</button>
+<span class="avatar" id="chat-avatar" aria-hidden="true"></span>
+<div><h2 id="contact" tabindex="-1"></h2><p id="status"></p></div><div class="actions" id="actions">
+<button data-action="claim" class="primary">Assumir conversa</button>
+<button data-action="release">Devolver ao Natus</button>
+<button data-action="resolve">Encerrar conversa</button>
+</div></div>
+<div class="chat-stage">
+  <div id="empty-chat">
+    <img src="/logo-natu-vale.png" alt="" width="480" height="515">
+    <h2>Selecione uma conversa</h2>
+    <p>O histórico e as ações de atendimento aparecem aqui.</p>
+  </div>
+  <div id="messages" role="log" aria-label="Histórico de mensagens" tabindex="0" hidden></div>
+</div>
+<div id="quick-replies" class="actions" aria-label="Respostas rápidas" hidden>
+  <button type="button" data-reply="Olá! Sou da equipe da Natu Vale. Como posso ajudar?">Saudação</button>
+  <button type="button" data-reply="Por favor, envie o número da Nota Fiscal (NF) e o CNPJ que consta na nota.">Solicitar NF e CNPJ</button>
+  <button type="button" data-reply="Obrigado pelo contato! Se precisar de mais alguma coisa, estamos à disposição.">Agradecer</button>
+</div>
+<form id="composer" hidden><textarea aria-label="Mensagem ao cliente" placeholder="Escreva uma mensagem" rows="2" required maxlength="4096"></textarea><button class="primary">Enviar</button></form>
+<section id="demo" aria-label="Respostas de teste" hidden><form id="simulation" class="demo-actions">
+<textarea id="simText" aria-label="Mensagem de teste" placeholder="Digite uma mensagem de teste" rows="2" maxlength="4096"></textarea>
+<button name="action" value="demo">Simular cliente</button>
+<button name="action" value="demo-whatsapp">Simular resposta no WhatsApp</button>
+<button name="action" value="demo-reminder">Simular 20 minutos</button>
+</form></section>
+</article></div>
+<article id="automation" aria-label="Configuração das respostas" hidden>
+  <div class="section">
+    <h2>Configurar respostas</h2>
+    <div class="actions" aria-label="Modo de programação">
+      <button type="button" data-config="manual" aria-controls="config-manual" aria-pressed="true">Respostas manuais</button>
+      <button type="button" data-config="ai" aria-controls="config-ai" aria-pressed="false">Respostas com IA</button>
+      <button type="button" id="close-automation">Fechar</button>
+    </div>
+  </div>
+  <form id="automation-form">
+    <fieldset id="config-manual">
+      <p>Edite o texto fixo enviado quando o cliente escolhe cada opção do menu.</p>
+      <label>1 · Uniformes<textarea name="1" required maxlength="4096" rows="3"></textarea></label>
+      <label>2 · Produtos personalizados<textarea name="2" required maxlength="4096" rows="3"></textarea></label>
+      <label>3 · Trabalhe Conosco<textarea name="3" required maxlength="4096" rows="3"></textarea></label>
+      <label>4 · Acompanhar pedido<textarea name="4" required maxlength="4096" rows="3"></textarea></label>
+      <label>5 · Falar com um atendente<textarea name="5" required maxlength="4096" rows="3"></textarea></label>
+    </fieldset>
+    <fieldset id="config-ai" hidden>
+      <p>Nas perguntas livres, o Natus usa esta base e as mensagens recentes. Quando precisa de ajuda, encaminha para a equipe.</p>
+      <p id="ai-provider"></p>
+      <label class="switch"><input name="enabled" type="checkbox"> Ativar respostas com IA</label>
+      <label>Base de informações da Natu Vale<textarea name="knowledge" maxlength="12000" rows="8"></textarea></label>
+    </fieldset>
+    <div class="actions"><button type="submit" class="primary">Salvar configurações</button></div>
+    <p id="automation-feedback" role="status"></p>
+  </form>
+</article></main>
+<script type="module">
+import { formatLastInteraction } from '/interface/contact-time.mjs';
+
+const byId = id => document.getElementById(id);
+const labels = { pendente:'Pendente', humano:'Em atendimento humano', natus:'Com o Natus', resolvido:'Resolvida' };
+const buttons = [...document.querySelectorAll('[data-action]')];
+const messages = byId('messages');
+const login = byId('login');
+const welcome = byId('welcome');
+const composer = byId('composer');
+const automationPanel = byId('automation');
+const automationForm = byId('automation-form');
+const automationFeedback = byId('automation-feedback');
+const configButtons = [...document.querySelectorAll('[data-config]')];
+const menuOptions = ['1', '2', '3', '4', '5'];
+const search = byId('search');
+const workspace = byId('workspace');
+const inbox = byId('queue');
+const unreadFilter = byId('unread-filter');
+const automationButton = byId('open-automation');
+const compactView = window.matchMedia('(max-width: 720px)');
+const dateLabel = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium' });
+const timeLabel = new Intl.DateTimeFormat('pt-BR', { hour: '2-digit', minute: '2-digit' });
+let chatList = [];
+let queueSnapshot;
+let unreadOnly = false;
+let renderedConversation;
+const statusFilter = byId('filter');
+const statusOptions = [...statusFilter.querySelectorAll('[data-status]')];
+let statusSelection = '';
+let selected = null;
+let user = null;
+let rendered = '';
+let loading = false;
+let busy = false;
+
+function setLoading(active) {
+  const screen = byId('loading-screen');
+  screen.classList.toggle('is-ready', !active);
+  screen.setAttribute('aria-hidden', String(!active));
+  document.querySelector('main').inert = active;
+}
+
+function showError(error) {
+  const active = byId(welcome.hidden ? 'error' : 'login-error');
+  for (const region of [byId('error'), byId('login-error')]) {
+    region.textContent = region === active ? error?.message || '' : '';
+    region.hidden = region !== active || !error;
+  }
+}
+
+async function api(path, body) {
+  const options = body === undefined ? {} : {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+  };
+  const response = await fetch(path, { ...options, signal: AbortSignal.timeout(30000) });
+  const data = await response.json();
+  if (!response.ok) throw Object.assign(new Error(data.error), {status:response.status});
+  return data;
+}
+
+function signedOut() {
+  user = null;
+  selected = null;
+  welcome.hidden = false;
+  workspace.hidden = true;
+  workspace.dataset.view = 'inbox';
+  chatList = [];
+  queueSnapshot = undefined;
+  inbox.replaceChildren();
+  rendered = '';
+  messages.replaceChildren();
+  composer.reset();
+  byId('simulation').reset();
+  automationPanel.hidden = true;
+  automationButton.setAttribute('aria-expanded', 'false');
+  byId('topbar').hidden = true;
+}
+
+function initials(id) {
+  if (/^\d+$/.test(id)) return id.slice(-2);
+  return id.trim().split(/\s+/).slice(0, 2).map(part => part.charAt(0)).join('').toLocaleUpperCase('pt-BR');
+}
+
+function displayContact(chat) {
+  return chat.displayName || chat.id;
+}
+
+function renderQueue() {
+  const query = search.value.trim().toLocaleLowerCase('pt-BR');
+  const phoneQuery = /^[\d\s()+.-]+$/.test(query) ? query.replace(/\D/g, '') : '';
+  const visibleChats = chatList.filter(chat =>
+    (!statusSelection || chat.status === statusSelection) &&
+    (!unreadOnly || chat.unread) &&
+    (!query || chat.id.toLocaleLowerCase('pt-BR').includes(query) ||
+      displayContact(chat).toLocaleLowerCase('pt-BR').includes(query) ||
+      (phoneQuery && chat.id.replace(/\D/g, '').includes(phoneQuery))));
+  const snapshot = JSON.stringify([selected, visibleChats]);
+  if (snapshot === queueSnapshot) return;
+  queueSnapshot = snapshot;
+  const focusedChat = inbox.contains(document.activeElement) ? document.activeElement.dataset.chatId : null;
+  const scrollPosition = inbox.scrollTop;
+  inbox.replaceChildren();
+  for (const chat of visibleChats) {
+    const button = document.createElement('button');
+    const avatar = document.createElement('span');
+    const copy = document.createElement('span');
+    const title = document.createElement('strong');
+    const detail = document.createElement('small');
+    const meta = document.createElement('span');
+    button.type = 'button';
+    button.dataset.chatId = chat.id;
+    button.setAttribute('aria-pressed', chat.id === selected);
+    avatar.className = 'avatar';
+    avatar.textContent = initials(displayContact(chat));
+    avatar.setAttribute('aria-hidden', 'true');
+    copy.className = 'queue-copy';
+    title.textContent = displayContact(chat);
+    detail.textContent = chat.alert ? 'Precisa de atenção' : chat.preview || labels[chat.status];
+    copy.append(title, detail);
+    meta.className = 'queue-meta';
+    if (chat.last_at) {
+      const timestamp = document.createElement('time');
+      timestamp.dateTime = new Date(chat.last_at).toISOString();
+      timestamp.textContent = formatLastInteraction(chat.last_at);
+      meta.append(timestamp);
+    }
+    if (chat.unread) {
+      const badge = document.createElement('small');
+      badge.className = 'unread';
+      badge.textContent = chat.unread;
+      badge.setAttribute('aria-label', chat.unread === 1 ? '1 mensagem não lida' : `${chat.unread} mensagens não lidas`);
+      meta.append(badge);
+    }
+    button.append(avatar, copy, meta);
+    button.onclick = () => {
+      if (selected === chat.id) return;
+      selected = chat.id;
+      composer.reset();
+      byId('simulation').reset();
+      refresh();
+    };
+    inbox.append(button);
+    if (focusedChat === chat.id) button.focus({ preventScroll: true });
+  }
+  if (!visibleChats.length) {
+    const empty = document.createElement('p');
+    empty.className = 'queue-empty';
+    empty.textContent = unreadOnly ? 'Nenhuma conversa não lida neste filtro.' : 'Nenhuma conversa encontrada.';
+    inbox.append(empty);
+  }
+  inbox.scrollTop = scrollPosition;
+}
+
+async function refresh() {
+  if (loading) return;
+  loading = true;
+  const requested = selected;
+  try {
+    const data = await api('/api/chats' + (requested ? '?id=' + encodeURIComponent(requested) : ''));
+    if (requested !== selected) return;
+    const entering = !welcome.hidden;
+    user = data.name;
+    welcome.hidden = true;
+    workspace.hidden = false;
+    byId('topbar').hidden = false;
+    if (entering) {
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0);
+    }
+    byId('agent').textContent = user;
+    automationButton.hidden = !data.canConfigure;
+    byId('whatsapp-channel').textContent = data.demo
+      ? `Demonstração · Número oficial ${data.officialNumber}`
+      : `WhatsApp ${data.officialNumber}`;
+    chatList = data.chats;
+    const chat = data.chats.find(item => item.id === selected);
+    workspace.dataset.view = chat ? 'chat' : 'inbox';
+    renderQueue();
+    byId('chat-heading').hidden = !chat;
+    byId('empty-chat').hidden = Boolean(chat);
+    messages.hidden = !chat;
+    byId('contact').textContent = chat ? displayContact(chat) : '';
+    byId('chat-avatar').textContent = chat ? initials(displayContact(chat)) : '';
+    byId('status').textContent = chat ? [
+      displayContact(chat) !== chat.id && /^\d+$/.test(chat.id) && '+' + chat.id,
+      labels[chat.status], chat.owner, chat.alert && 'Precisa de atenção',
+    ].filter(Boolean).join(' · ') : '';
+    const own = chat?.status === 'humano' && chat.owner === user;
+    const app = chat?.owner === 'WhatsApp Business';
+    buttons[0].hidden = !chat || chat.status === 'resolvido' || (chat.status === 'humano' && !app);
+    buttons[1].hidden = !(own || app);
+    buttons[2].hidden = !chat || chat.status === 'resolvido' || (chat.status === 'humano' && !own && !app);
+    composer.hidden = !own;
+    byId('quick-replies').hidden = !own;
+    byId('demo').hidden = !data.demo || !chat;
+    const snapshot = JSON.stringify([selected, data.messages]);
+    if (snapshot !== rendered) {
+      const changedConversation = renderedConversation !== selected;
+      const previousScroll = messages.scrollTop;
+      const nearBottom = messages.scrollHeight - messages.clientHeight - previousScroll < 48;
+      rendered = snapshot;
+      renderedConversation = selected;
+      messages.replaceChildren();
+      let previousDate;
+      for (const message of data.messages) {
+        const day = dateLabel.format(message.at);
+        if (day !== previousDate) {
+          const divider = document.createElement('p');
+          divider.className = 'chat-date';
+          divider.textContent = day;
+          messages.append(divider);
+          previousDate = day;
+        }
+        const bubble = document.createElement('div');
+        bubble.className = 'message' + (message.actor === 'Cliente' ? '' : ' out');
+        const meta = document.createElement('small');
+        meta.textContent = message.actor + ' · ' + timeLabel.format(message.at);
+        const body = document.createElement('p');
+        body.textContent = message.body;
+        bubble.append(meta, body);
+        messages.append(bubble);
+      }
+      if (chat && !data.messages.length) {
+        const empty = document.createElement('p');
+        empty.className = 'chat-date';
+        empty.textContent = 'Ainda não há mensagens.';
+        messages.append(empty);
+      }
+      messages.scrollTop = changedConversation || nearBottom ? messages.scrollHeight : previousScroll;
+      if (chat && changedConversation && compactView.matches) {
+        byId('contact').focus({ preventScroll: true });
+        window.scrollTo(0, 0);
+      }
+    }
+    const lastMessage = data.messages.at(-1);
+    if (chat?.unread && lastMessage && !document.hidden) {
+      await api('/api/action', { id: chat.id, action: 'read', body: lastMessage.id });
+      chat.unread = 0;
+      renderQueue();
+    }
+  } catch (error) {
+    if (error.status === 401) signedOut();
+    else showError(error);
+  } finally {
+    loading = false;
+    if (requested !== selected && user) refresh();
+  }
+}
+
+async function act(action, body) {
+  if (busy) return false;
+  busy = true;
+  showError();
+  try {
+    await api('/api/action', {id:selected, action, body});
+    if (action === 'logout') signedOut();
+    else await refresh();
+    return true;
+  } catch (error) {
+    if (error.status === 401) signedOut();
+    showError(error);
+    return false;
+  } finally {
+    busy = false;
+  }
+}
+
+login.onsubmit = async event => {
+  event.preventDefault();
+  const credentials = Object.fromEntries(new FormData(login));
+  showError();
+  setLoading(true);
+  try {
+    await api('/api/login', credentials);
+    login.reset();
+    await refresh();
+  } catch (error) {
+    showError(error);
+  } finally {
+    setLoading(false);
+  }
+};
+byId('logout').onclick = () => act('logout');
+unreadFilter.onclick = () => {
+  unreadOnly = !unreadOnly;
+  unreadFilter.setAttribute('aria-pressed', String(unreadOnly));
+  renderQueue();
+};
+byId('back-to-inbox').onclick = () => {
+  const previous = selected;
+  selected = null;
+  workspace.dataset.view = 'inbox';
+  renderQueue();
+  const previousButton = [...inbox.querySelectorAll('button')].find(button => button.dataset.chatId === previous);
+  (previousButton || search).focus();
+  refresh();
+};
+function closeStatusFilter(restoreFocus = false) {
+  statusFilter.open = false;
+  if (restoreFocus) statusFilter.querySelector('summary').focus();
+}
+for (const option of statusOptions) {
+  option.onclick = () => {
+    statusSelection = option.dataset.status;
+    byId('filter-current').textContent = option.textContent;
+    for (const item of statusOptions) item.setAttribute('aria-pressed', String(item === option));
+    closeStatusFilter(true);
+    renderQueue();
+  };
+}
+document.addEventListener('click', event => {
+  if (statusFilter.open && !statusFilter.contains(event.target)) closeStatusFilter();
+});
+statusFilter.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && statusFilter.open) {
+    event.preventDefault();
+    closeStatusFilter(true);
+  }
+});
+for (const button of buttons) button.onclick = () => act(button.dataset.action);
+composer.onsubmit = async event => {
+  event.preventDefault();
+  const input = composer.querySelector('textarea');
+  if (await act('send', input.value)) composer.reset();
+};
+search.oninput = renderQueue;
+for (const button of document.querySelectorAll('[data-reply]')) {
+  button.onclick = () => {
+    const input = composer.querySelector('textarea');
+    input.setRangeText(button.dataset.reply, input.selectionStart, input.selectionEnd, 'end');
+    input.focus();
+  };
+}
+byId('simulation').onsubmit = async event => {
+  event.preventDefault();
+  if (await act(event.submitter.value, byId('simText').value)) byId('simulation').reset();
+};
+for (const button of configButtons) {
+  button.onclick = () => {
+    for (const item of configButtons) {
+      const active = item === button;
+      item.setAttribute('aria-pressed', String(active));
+      byId(item.getAttribute('aria-controls')).hidden = !active;
+    }
+  };
+}
+automationButton.onclick = async event => {
+  if (!automationPanel.hidden) {
+    byId('close-automation').click();
+    return;
+  }
+  const button = event.currentTarget;
+  button.disabled = true;
+  showError();
+  try {
+    const config = await api('/api/automation');
+    for (const option of menuOptions) automationForm.elements.namedItem(option).value = config.manual[option];
+    automationForm.elements.enabled.checked = config.enabled;
+    automationForm.elements.knowledge.value = config.knowledge;
+    byId('ai-provider').textContent = config.aiConfigured
+      ? 'Modelo local configurado.'
+      : 'Configure NATUS_AI_MODEL e inicie o Ollama para ativar a IA.';
+    automationForm.elements.enabled.disabled = !config.aiConfigured;
+    automationFeedback.textContent = '';
+    automationPanel.hidden = false;
+    automationButton.setAttribute('aria-expanded', 'true');
+    automationPanel.scrollIntoView();
+    configButtons[0].click();
+    configButtons[0].focus({ preventScroll: true });
+  } catch (error) {
+    showError(error);
+  } finally {
+    button.disabled = false;
+  }
+};
+byId('close-automation').onclick = () => {
+  automationPanel.hidden = true;
+  automationButton.setAttribute('aria-expanded', 'false');
+  automationButton.focus();
+};
+automationForm.onsubmit = async event => {
+  event.preventDefault();
+  for (const option of menuOptions) {
+    const field = automationForm.elements.namedItem(option);
+    if (!field.value.trim()) {
+      configButtons[0].click();
+      automationFeedback.textContent = 'Preencha a resposta da opção ' + option + '.';
+      field.focus();
+      return;
+    }
+  }
+  const submit = event.submitter;
+  submit.disabled = true;
+  try {
+    const fields = automationForm.elements;
+    await api('/api/automation', {
+      manual: Object.fromEntries(menuOptions.map(option => [option, fields.namedItem(option).value])),
+      enabled: fields.enabled.checked,
+      knowledge: fields.knowledge.value
+    });
+    automationFeedback.textContent = 'Configurações salvas.';
+  } catch (error) {
+    automationFeedback.textContent = error.message;
+  } finally {
+    submit.disabled = false;
+  }
+};
+setLoading(true);
+refresh().finally(() => setLoading(false));
+setInterval(() => { if (user && !busy) refresh(); }, 3500);
+setInterval(() => {
+  for (const timestamp of inbox.querySelectorAll('time')) {
+    timestamp.textContent = formatLastInteraction(timestamp.dateTime);
+  }
+}, 60000);
+</script>
+</html>
+
