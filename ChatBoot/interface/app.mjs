@@ -165,7 +165,11 @@ function showDialog(title, content) {
 }
 
 theme.onclick = () => setTheme(!isDark());
-byId('profile').onclick = () => showDialog('Equipe Natu Vale', '<div class="dialog-stack"><p>Este ambiente usa conversas fictícias para testar a interface.</p><a class="button" href="/">Abrir painel atual do ChatBoot</a></div>');
+byId('profile').onclick = () => {
+  const localPanel = location.pathname === '/interface/'
+    ? '<a class="button" href="/">Abrir painel atual do ChatBoot</a>' : '';
+  showDialog('Equipe Natu Vale', `<div class="dialog-stack"><p>Este ambiente usa conversas fictícias para testar a interface.</p>${localPanel}</div>`);
+};
 byId('close-dialog').onclick = () => dialog.close();
 dialog.onclick = event => { if (event.target === dialog) dialog.close(); };
 byId('back').onclick = () => showList();

@@ -10,7 +10,7 @@ const url = `http://127.0.0.1:${port}/interface/`;
 async function probe() {
   try {
     const response = await fetch(url, { signal: AbortSignal.timeout(800), redirect: 'manual' });
-    return response.ok && (await response.text()).includes('/interface/app.mjs') ? 'ready' : 'occupied';
+    return response.ok && (await response.text()).includes('id="app" data-view="list"') ? 'ready' : 'occupied';
   } catch {
     return 'offline';
   }
