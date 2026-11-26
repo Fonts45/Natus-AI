@@ -56,7 +56,6 @@ function renderQueue() {
     if (search && !normalize([chat.name, chat.category, chat.latest].join(' ')).includes(search)) return false;
     if (state.filter === 'unread') return chat.unread > 0;
     if (state.filter === 'favorite') return chat.favorite;
-    if (state.filter === 'group') return chat.kind === 'group';
     return true;
   });
   const previousScroll = queue.scrollTop;
