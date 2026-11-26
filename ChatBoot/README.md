@@ -8,13 +8,16 @@ O diretório `interface` separa a estrutura HTML, os estilos e a lógica da tela
 
 Em **Detalhes da conversa**, pode-se selecionar uma foto local de teste. Ela aparece na fila e na conversa durante a sessão da demonstração.
 
-Execute com Node.js 24 ou superior. No PowerShell, a partir da raiz do projeto:
+No Windows, dê dois cliques em **Iniciar Natus.cmd**. Ele encontra o Node.js 24 ou superior, inicia o servidor em segundo plano e abre a demonstração quando ela estiver pronta. Depois de reiniciar o computador, execute o iniciador novamente. Em caso de erro de inicialização, consulte `natus-launcher.log` nesta pasta.
+
+Para iniciar pelo PowerShell a partir da raiz do projeto, com Node.js disponível no PATH:
 
 ```powershell
+$env:NATUS_PORT = '8790'
 node .\ChatBoot\server.mjs --demo
 ```
 
-Abra o arquivo **Iniciar Natus.cmd** para usar o painel em http://127.0.0.1:8790. Entre com a conta oficial **natumarketing98@gmail.com**. O hash da senha fica no arquivo local ignorado pelo Git, `natus-admin.local.json`. Escolha uma conversa para experimentar o painel e abra **Simulação local** para testar mensagens do cliente, respostas pelo WhatsApp Business e o lembrete de 20 minutos. Os dados de demonstração são recriados ao reiniciar.
+O painel com login está em http://127.0.0.1:8790/. Entre com uma conta administrativa. O hash da senha fica no arquivo local ignorado pelo Git, `natus-admin.local.json`. Escolha uma conversa para testar mensagens do cliente, respostas pelo WhatsApp Business e o lembrete de 20 minutos na barra de simulação. Os dados de demonstração são recriados ao reiniciar.
 
 ## Configuração com WhatsApp
 
@@ -26,7 +29,7 @@ Para habilitar a IA, rode o Ollama no mesmo computador ou servidor do ChatBoot e
 
 No portfólio empresarial da NVC, confirme quem administra a conta que contém o número. Se o número estiver sob gestão do ChatPro, confirme a titularidade e se será preciso migrá-lo antes da troca. Confirme também a elegibilidade para usar o mesmo número no aplicativo WhatsApp Business e na API.
 
-Para iniciar no Windows, copie `meta.example.env` para `meta.local.env` e preencha os dados no próprio computador. Feche a demonstração antes de iniciar **Iniciar Natus WhatsApp.cmd**, pois ambos usam a mesma porta por padrão. Use um proxy HTTPS para o painel e o webhook.
+Para iniciar no Windows, copie `meta.example.env` para `meta.local.env` e preencha os dados no próprio computador. Antes de iniciar **Iniciar Natus WhatsApp.cmd**, encerre o processo local de demonstração ou configure outra porta em `meta.local.env`. Use um proxy HTTPS para o painel e o webhook.
 
 O único número aceito pela integração é **+55 24 99261-2870**. Use o ID desse número no Gerenciador do WhatsApp. Ao iniciar, o ChatBoot verifica se o número retornado pela Meta corresponde ao número oficial.
 
