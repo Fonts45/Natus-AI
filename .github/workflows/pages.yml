@@ -1,0 +1,57 @@
+name: Publicar Natus no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ChatBoot/index.html'
+      - 'ChatBoot/interface/**'
+      - 'ChatBoot/assets/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: natus-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter arquivos
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Preparar demonstração
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p site/ChatBoot/assets site/ChatBoot/interface
+          cp ChatBoot/index.html site/ChatBoot/index.html
+          sed 's|\./interface/|./ChatBoot/interface/|g' ChatBoot/index.html > site/index.html
+          touch site/.nojekyll
+          cp ChatBoot/assets/{favicon-natu-vale-circular.svg,logo-carregamento.svg,logo-natu-vale.png} site/ChatBoot/assets/
+          cp ChatBoot/interface/{index.html,app.mjs,views.mjs,demo-gateway.mjs,fixtures.mjs,contact-time.mjs,styles.css,fonts.css,fundo-conversas.png,montserrat-400.ttf,montserrat-700.ttf,montserrat-800.ttf} site/ChatBoot/interface/
+          test -s site/index.html
+          test -s site/ChatBoot/interface/index.html
+      - name: Empacotar demonstração
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar demonstração
+        id: deployment
+        uses: actions/deploy-pages@v4
