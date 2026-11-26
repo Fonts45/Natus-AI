@@ -28,9 +28,10 @@ if (!demo) {
   }
 }
 
-const db = new DatabaseSync(demo ? ':memory:' : fileURLToPath(new URL('./natus.sqlite', import.meta.url)));
+const localData = new URL('./dados-locais/', import.meta.url);
+const db = new DatabaseSync(demo ? ':memory:' : fileURLToPath(new URL('natus.sqlite', localData)));
 const settingsDb = demo
-  ? new DatabaseSync(fileURLToPath(new URL('./natus-demo-settings.sqlite', import.meta.url)))
+  ? new DatabaseSync(fileURLToPath(new URL('natus-demo-settings.sqlite', localData)))
   : db;
 settingsDb.exec('CREATE TABLE IF NOT EXISTS automation_settings (id INTEGER PRIMARY KEY, config TEXT NOT NULL)');
 db.exec(`
@@ -60,7 +61,7 @@ if (!db.prepare("SELECT 1 FROM pragma_table_info('chats') WHERE name = 'profile_
   db.exec('ALTER TABLE chats ADD COLUMN profile_name TEXT');
 }
 
-const adminConfig = JSON.parse(readFileSync(new URL('./natus-admin.local.json', import.meta.url), 'utf8'));
+const adminConfig = JSON.parse(readFileSync(new URL('natus-admin.local.json', localData), 'utf8'));
 const admins = Array.isArray(adminConfig) ? adminConfig : [adminConfig];
 const users = demo ? {} : JSON.parse(env.NATUS_USERS || '{}');
 const salt = randomBytes(32);
@@ -72,10 +73,12 @@ for (const admin of admins) {
 }
 const sessions = new Map();
 const attempts = new Map();
-const page = readFileSync(new URL('./painel.html', import.meta.url));
-const favicon = readFileSync(new URL('./favicon-natu-vale-circular.svg', import.meta.url));
-const logo = readFileSync(new URL('./logo-natu-vale.png', import.meta.url));
-const loadingLogo = readFileSync(new URL('./logo-carregamento.svg', import.meta.url));
+const page = readFileSync(new URL('./painel/index.html', import.meta.url));
+const brandAssets = new Map([
+  ['/assets/favicon-natu-vale-circular.svg', 'image/svg+xml'],
+  ['/assets/logo-natu-vale.png', 'image/png'],
+  ['/assets/logo-carregamento.svg', 'image/svg+xml'],
+]);
 const interfaceFiles = new Map([
   ['/interface/', ['index.html', 'text/html; charset=utf-8']],
   ['/interface/styles.css', ['styles.css', 'text/css; charset=utf-8']],
@@ -341,17 +344,10 @@ createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': mime });
       return res.end(body);
     }
-    if (req.method === 'GET' && path.pathname === '/favicon-natu-vale-circular.svg') {
-      res.setHeader('Content-Type', 'image/svg+xml');
-      return res.end(favicon);
-    }
-    if (req.method === 'GET' && path.pathname === '/logo-natu-vale.png') {
-      res.setHeader('Content-Type', 'image/png');
-      return res.end(logo);
-    }
-    if (req.method === 'GET' && path.pathname === '/logo-carregamento.svg') {
-      res.setHeader('Content-Type', 'image/svg+xml');
-      return res.end(loadingLogo);
+    if (req.method === 'GET' && brandAssets.has(path.pathname)) {
+      const body = readFileSync(new URL(`.${path.pathname}`, import.meta.url));
+      res.writeHead(200, { 'Content-Type': brandAssets.get(path.pathname) });
+      return res.end(body);
     }
     if (req.method === 'GET' && path.pathname === '/') {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');

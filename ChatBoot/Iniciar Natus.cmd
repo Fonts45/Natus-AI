@@ -10,7 +10,7 @@ if not defined NATUS_NODE (
   exit /b 1
 )
 echo Abrindo o ChatBoot...
-"%NATUS_NODE%" "%~dp0iniciar-natus.mjs"
+"%NATUS_NODE%" "%~dp0scripts\iniciar-natus.mjs"
 if errorlevel 1 (
   pause
   exit /b 1

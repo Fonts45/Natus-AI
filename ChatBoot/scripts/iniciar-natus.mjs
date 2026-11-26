@@ -3,7 +3,8 @@ import { closeSync, openSync } from 'node:fs';
 import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
-const folder = fileURLToPath(new URL('.', import.meta.url));
+const project = new URL('../', import.meta.url);
+const folder = fileURLToPath(project);
 const port = '8790';
 const url = `http://127.0.0.1:${port}/interface/`;
 
@@ -22,7 +23,7 @@ async function start() {
   if (initial === 'ready') return;
   if (initial === 'occupied') throw new Error(`Outro serviço está respondendo na porta ${port}.`);
 
-  const log = openSync(new URL('./natus-launcher.log', import.meta.url), 'a');
+  const log = openSync(new URL('dados-locais/natus-launcher.log', project), 'a');
   let child;
   try {
     child = spawn(process.execPath, ['server.mjs', '--demo'], {
@@ -43,7 +44,7 @@ async function start() {
     if (child.exitCode !== null && attempt > 4) break;
     await setTimeout(250);
   }
-  throw new Error('O servidor não iniciou. Consulte natus-launcher.log na pasta ChatBoot.');
+  throw new Error('O servidor não iniciou. Consulte dados-locais/natus-launcher.log.');
 }
 
 try {

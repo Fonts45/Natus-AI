@@ -8,7 +8,7 @@ O diretório `interface` separa a estrutura HTML, os estilos e a lógica da tela
 
 Em **Detalhes da conversa**, pode-se selecionar uma foto local de teste. Ela aparece na fila e na conversa durante a sessão da demonstração.
 
-No Windows, dê dois cliques em **Iniciar Natus.cmd**. Ele encontra o Node.js 24 ou superior, inicia o servidor em segundo plano e abre a demonstração quando ela estiver pronta. Depois de reiniciar o computador, execute o iniciador novamente. Em caso de erro de inicialização, consulte `natus-launcher.log` nesta pasta.
+No Windows, dê dois cliques em **Iniciar Natus.cmd**. Ele encontra o Node.js 24 ou superior, inicia o servidor em segundo plano e abre a demonstração quando ela estiver pronta. Depois de reiniciar o computador, execute o iniciador novamente. Em caso de erro de inicialização, consulte `dados-locais/natus-launcher.log`.
 
 Para iniciar pelo PowerShell a partir da raiz do projeto, com Node.js disponível no PATH:
 
@@ -17,7 +17,20 @@ $env:NATUS_PORT = '8790'
 node .\ChatBoot\server.mjs --demo
 ```
 
-O painel com login está em http://127.0.0.1:8790/. Entre com uma conta administrativa. O hash da senha fica no arquivo local ignorado pelo Git, `natus-admin.local.json`. Escolha uma conversa para testar mensagens do cliente, respostas pelo WhatsApp Business e o lembrete de 20 minutos na barra de simulação. Os dados de demonstração são recriados ao reiniciar.
+O painel com login está em http://127.0.0.1:8790/. Entre com uma conta administrativa. Os hashes ficam em `dados-locais/natus-admin.local.json`. Escolha uma conversa para testar mensagens do cliente, respostas pelo WhatsApp Business e o lembrete de 20 minutos na barra de simulação. As conversas de demonstração são recriadas ao reiniciar.
+
+## Organização da pasta
+
+| Pasta | Conteúdo |
+|---|---|
+| `assets/` | Logotipos e ícone da NVC usados pelo painel e pela demonstração. |
+| `interface/` | Demonstração com dados fictícios, estilos, fontes e módulos. |
+| `painel/` | Interface do painel com login, servida pelo Node.js. |
+| `scripts/` | Script de inicialização usado pelo atalho do Windows. |
+| `config/` | Modelo de configuração da Meta sem credenciais. |
+| `dados-locais/` | Contas administrativas, bancos de dados, configuração local e log. A pasta é ignorada pelo Git. |
+
+Para publicar a demonstração estática a partir desta pasta, use `index.html`, `.nojekyll`, `interface/` e `assets/`.
 
 ## Configuração com WhatsApp
 
@@ -25,11 +38,11 @@ O painel com login está em http://127.0.0.1:8790/. Entre com uma conta administ
 
 No painel, abra **Configurar respostas**. A aba **Respostas manuais** guarda os cinco textos fixos do menu. Uma escolha pelo número da opção sempre usa o texto salvo. A aba **Respostas com IA** permite editar a base da NVC e ativar respostas a perguntas livres. Quando a IA precisa de ajuda, a conversa entra na fila humana.
 
-Para habilitar a IA, rode o Ollama no mesmo computador ou servidor do ChatBoot e defina `NATUS_AI_MODEL` com o nome de um modelo já baixado. O ChatBoot usa o endpoint local `http://127.0.0.1:11434/api/chat`. Em produção, a variável pode ser definida em `meta.local.env`. Na demonstração, defina a variável no PowerShell antes de executar `node .\ChatBoot\server.mjs --demo`. As configurações da demonstração são salvas em `natus-demo-settings.sqlite`, e as de produção, em `natus.sqlite`.
+Para habilitar a IA, rode o Ollama no mesmo computador ou servidor do ChatBoot e defina `NATUS_AI_MODEL` com o nome de um modelo já baixado. O ChatBoot usa o endpoint local `http://127.0.0.1:11434/api/chat`. Em produção, a variável pode ser definida em `dados-locais/meta.local.env`. Na demonstração, defina a variável no PowerShell antes de executar `node .\ChatBoot\server.mjs --demo`. As configurações ficam em `dados-locais/`, nos bancos `natus-demo-settings.sqlite` e `natus.sqlite`.
 
 No portfólio empresarial da NVC, confirme quem administra a conta que contém o número. Se o número estiver sob gestão do ChatPro, confirme a titularidade e se será preciso migrá-lo antes da troca. Confirme também a elegibilidade para usar o mesmo número no aplicativo WhatsApp Business e na API.
 
-Para iniciar no Windows, copie `meta.example.env` para `meta.local.env` e preencha os dados no próprio computador. Antes de iniciar **Iniciar Natus WhatsApp.cmd**, encerre o processo local de demonstração ou configure outra porta em `meta.local.env`. Use um proxy HTTPS para o painel e o webhook.
+Para iniciar no Windows, copie `config/meta.example.env` para `dados-locais/meta.local.env` e preencha os dados no próprio computador. Antes de iniciar **Iniciar Natus WhatsApp.cmd**, encerre o processo local de demonstração ou configure outra porta nesse arquivo. Use um proxy HTTPS para o painel e o webhook.
 
 O único número aceito pela integração é **+55 24 99261-2870**. Use o ID desse número no Gerenciador do WhatsApp. Ao iniciar, o ChatBoot verifica se o número retornado pela Meta corresponde ao número oficial.
 
@@ -47,5 +60,5 @@ Inicie o serviço sem `--demo` e configure estas variáveis no ambiente do servi
 
 Coloque o serviço atrás de um proxy HTTPS. Cadastre `/webhook` no aplicativo da Meta e assine `messages` e, para atendimento pelo aplicativo com o mesmo número, `smb_message_echoes`. Quando a coexistência e a sincronização da agenda forem autorizadas, assine também `smb_app_state_sync` para receber nomes salvos. O painel usa o nome salvo quando disponível, seguido pelo nome de perfil recebido com a mensagem e pelo número. Os eventos documentados da Meta não fornecem a foto de perfil do cliente. Confirme a configuração de coexistência e as mensagens de teste antes de usar o número em produção. O painel escuta somente em loopback e usa cookies Secure fora da demonstração.
 
-O histórico de produção fica em `natus.sqlite`, ao lado do servidor, dentro de `nvc-private`. Mantenha o serviço em um processo contínuo para verificar os lembretes e inclua o banco no backup privado. Os anexos aparecem no histórico pelo tipo. Na opção 4, a equipe recebe os dados do cliente no painel para consultar o rastreamento.
+O histórico de produção fica em `dados-locais/natus.sqlite`. Mantenha o serviço em um processo contínuo para verificar os lembretes e inclua o banco no backup privado. Os anexos aparecem no histórico pelo tipo. Na opção 4, a equipe recebe os dados do cliente no painel para consultar o rastreamento.
 
