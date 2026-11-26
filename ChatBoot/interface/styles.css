@@ -93,7 +93,7 @@ button, summary { transition: background-color .18s ease, color .18s ease, borde
 .icon-button { padding: 0; width: 42px; height: 42px; flex: 0 0 42px; }
 .new-chat { background: var(--accent); color: var(--accent-text); border-color: transparent; }
 .new-chat:hover, .send:hover { background: var(--accent); filter: brightness(.92); }
-.search { display: flex; align-items: center; gap: .55rem; padding: 0 .8rem; background: var(--soft); border: 1px solid var(--border); border-radius: 12px; color: var(--muted); }
+.search { display: flex; align-items: center; gap: .55rem; padding: 0 .8rem; background: var(--soft); border: 1px solid var(--border); border-radius: 999px; color: var(--muted); }
 .search input { width: 100%; min-width: 0; min-height: 42px; padding: .4rem 0; color: var(--text); border: 0; background: transparent; outline: none; }
 .search:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }
 .search input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
