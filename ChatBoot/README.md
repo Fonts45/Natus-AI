@@ -1,36 +1,38 @@
 # Natus · Atendimento Natu Vale
 
-## Demonstração da nova interface
+## Abrir no computador
 
-Com o ChatBoot iniciado, abra [Demonstração da interface](http://127.0.0.1:8790/interface/). O ambiente usa dados fictícios em memória para testar a fila, os filtros, o histórico, os menus e o envio simulado. Ao recarregar, as conversas voltam aos dados de exemplo. A preferência de tema fica no navegador. Selecionar um anexo registra apenas seus dados básicos na conversa simulada.
+Dê dois cliques em [`index.html`](index.html) na pasta `ChatBoot`. Ele abre a demonstração diretamente no navegador. Dá para testar a fila, os filtros, o histórico e o envio de mensagens fictícias. Ao recarregar, as conversas voltam aos dados de exemplo.
 
-O diretório `interface` separa a estrutura HTML, os estilos e a lógica da tela. `app.mjs` controla as interações, `views.mjs` renderiza os componentes e `demo-gateway.mjs` oferece operações assíncronas sobre `fixtures.mjs`. Futuras integrações podem implementar o contrato do adaptador para listar, consultar, atualizar e enviar mensagens. Mantenha as credenciais da Meta, do Supabase e do Natus no servidor.
+Para usar o painel com login, execute **Iniciar Natus.cmd** e abra o [painel de atendimento](http://127.0.0.1:8790/). O iniciador usa o Node.js 24 ou superior. Após reiniciar o computador, execute o iniciador novamente para ativar o painel. O log de inicialização fica em `dados-locais/natus-launcher.log`.
 
-Em **Detalhes da conversa**, pode-se selecionar uma foto local de teste. Ela aparece na fila e na conversa durante a sessão da demonstração.
-
-No Windows, dê dois cliques em **Iniciar Natus.cmd**. Ele encontra o Node.js 24 ou superior, inicia o servidor em segundo plano e abre a demonstração quando ela estiver pronta. Depois de reiniciar o computador, execute o iniciador novamente. Em caso de erro de inicialização, consulte `dados-locais/natus-launcher.log`.
-
-Para iniciar pelo PowerShell a partir da raiz do projeto, com Node.js disponível no PATH:
+Para iniciar pelo PowerShell dentro de `ChatBoot`, use estes comandos com Node.js disponível no PATH.
 
 ```powershell
 $env:NATUS_PORT = '8790'
-node .\ChatBoot\server.mjs --demo
+node .\server.mjs --demo
 ```
 
-O painel com login está em http://127.0.0.1:8790/. Entre com uma conta administrativa. Os hashes ficam em `dados-locais/natus-admin.local.json`. Escolha uma conversa para testar mensagens do cliente, respostas pelo WhatsApp Business e o lembrete de 20 minutos na barra de simulação. As conversas de demonstração são recriadas ao reiniciar.
+Entre com uma conta administrativa do painel. Os hashes ficam em `dados-locais/natus-admin.local.json`. Escolha uma conversa para simular mensagens do cliente, respostas pelo WhatsApp Business e o lembrete de 20 minutos.
 
 ## Organização da pasta
 
 | Pasta | Conteúdo |
 |---|---|
-| `assets/` | Logotipos e ícone da NVC usados pelo painel e pela demonstração. |
-| `interface/` | Demonstração com dados fictícios, estilos, fontes e módulos. |
+| `publicar/` | Demonstração estática com `index.html`, `css/`, `js/` e `assets/`. |
+| `interface/` | Entrada de compatibilidade para quem abriu o `index.html` pelo caminho antigo. |
 | `painel/` | Interface do painel com login, servida pelo Node.js. |
 | `scripts/` | Script de inicialização usado pelo atalho do Windows. |
 | `config/` | Modelo de configuração da Meta sem credenciais. |
 | `dados-locais/` | Contas administrativas, bancos de dados, configuração local e log. A pasta é ignorada pelo Git. |
 
-Para publicar a demonstração estática a partir desta pasta, use `index.html`, `.nojekyll`, `interface/` e `assets/`.
+## Hospedar a demonstração
+
+Envie o conteúdo de `publicar/` para a raiz da hospedagem estática. O `index.html` dessa pasta é a página inicial. Mantenha `css/`, `js/` e `assets/` ao lado dele.
+
+O repositório `Fonts45/Natus-AI` usa um fluxo do GitHub Actions que publica a demonstração de `ChatBoot/publicar/` a cada mudança nessa pasta na branch `main`. [Fluxo de publicação](https://github.com/Fonts45/Natus-AI/actions/workflows/pages.yml) · [Demonstração hospedada](https://fonts45.github.io/Natus-AI/).
+
+O painel com login e o webhook da Meta precisam do servidor Node.js. As credenciais e os dados de atendimento ficam em `dados-locais/`, fora de `publicar/`.
 
 ## Configuração com WhatsApp
 
@@ -38,7 +40,7 @@ Para publicar a demonstração estática a partir desta pasta, use `index.html`,
 
 No painel, abra **Configurar respostas**. A aba **Respostas manuais** guarda os cinco textos fixos do menu. Uma escolha pelo número da opção sempre usa o texto salvo. A aba **Respostas com IA** permite editar a base da NVC e ativar respostas a perguntas livres. Quando a IA precisa de ajuda, a conversa entra na fila humana.
 
-Para habilitar a IA, rode o Ollama no mesmo computador ou servidor do ChatBoot e defina `NATUS_AI_MODEL` com o nome de um modelo já baixado. O ChatBoot usa o endpoint local `http://127.0.0.1:11434/api/chat`. Em produção, a variável pode ser definida em `dados-locais/meta.local.env`. Na demonstração, defina a variável no PowerShell antes de executar `node .\ChatBoot\server.mjs --demo`. As configurações ficam em `dados-locais/`, nos bancos `natus-demo-settings.sqlite` e `natus.sqlite`.
+Para habilitar a IA, rode o Ollama no mesmo computador ou servidor do ChatBoot e defina `NATUS_AI_MODEL` com o nome de um modelo já baixado. O ChatBoot usa o endpoint local `http://127.0.0.1:11434/api/chat`. Em produção, a variável pode ser definida em `dados-locais/meta.local.env`. Na demonstração, defina a variável no PowerShell antes de executar `node .\server.mjs --demo` dentro de `ChatBoot`. As configurações ficam em `dados-locais/`, nos bancos `natus-demo-settings.sqlite` e `natus.sqlite`.
 
 No portfólio empresarial da NVC, confirme quem administra a conta que contém o número. Se o número estiver sob gestão do ChatPro, confirme a titularidade e se será preciso migrá-lo antes da troca. Confirme também a elegibilidade para usar o mesmo número no aplicativo WhatsApp Business e na API.
 

@@ -175,7 +175,7 @@ button, summary { transition: background-color .18s ease, color .18s ease, borde
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: url("./fundo-conversas.png") repeat center top / clamp(300px, 34vw, 510px) auto;
+  background: url("../assets/imagens/fundo-conversas.png") repeat center top / clamp(300px, 34vw, 510px) auto;
   filter: grayscale(1) brightness(1.06);
   mix-blend-mode: multiply;
   opacity: .62;

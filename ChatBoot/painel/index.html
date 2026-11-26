@@ -9,7 +9,7 @@ if (location.protocol === 'file:') location.replace('http://127.0.0.1:8790/');
 <link rel="icon" type="image/svg+xml" href="/assets/favicon-natu-vale-circular.svg?v=3">
 <link rel="preload" as="image" href="/assets/logo-carregamento.svg">
 <meta name="theme-color" content="#215037">
-<link rel="stylesheet" href="/interface/fonts.css">
+<link rel="stylesheet" href="/interface/css/fonts.css">
 <style>
 :root{font:16px system-ui,sans-serif;color:#173229;background:#edf2ef;--forest:#123e2e;--line:#d9e4dc}
 *{box-sizing:border-box}
@@ -545,8 +545,9 @@ main:has(#workspace:not([hidden])) { max-width: 1560px; padding: 1rem clamp(.75r
     <p id="automation-feedback" role="status"></p>
   </form>
 </article></main>
+<script src="/interface/js/contact-time.js"></script>
 <script type="module">
-import { formatLastInteraction } from '/interface/contact-time.mjs';
+const { formatLastInteraction } = globalThis.NatusDemo;
 
 const byId = id => document.getElementById(id);
 const labels = { pendente:'Pendente', humano:'Em atendimento humano', natus:'Com o Natus', resolvido:'Resolvida' };

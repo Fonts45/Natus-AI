@@ -5,8 +5,7 @@ on:
     branches: [main]
     paths:
       - 'ChatBoot/index.html'
-      - 'ChatBoot/interface/**'
-      - 'ChatBoot/assets/**'
+      - 'ChatBoot/publicar/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -29,12 +28,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p site/ChatBoot/assets site/ChatBoot/interface
-          cp ChatBoot/index.html site/ChatBoot/index.html
-          sed 's|\./interface/|./ChatBoot/interface/|g' ChatBoot/index.html > site/index.html
+          mkdir -p site/ChatBoot/interface
+          cp -a ChatBoot/publicar/{index.html,css,js,assets} site/ChatBoot/interface/
+          sed 's|\./publicar/index.html|./ChatBoot/interface/index.html|g' ChatBoot/index.html > site/index.html
+          sed 's|\./publicar/index.html|./interface/index.html|g' ChatBoot/index.html > site/ChatBoot/index.html
           touch site/.nojekyll
-          cp ChatBoot/assets/{favicon-natu-vale-circular.svg,logo-carregamento.svg,logo-natu-vale.png} site/ChatBoot/assets/
-          cp ChatBoot/interface/{index.html,app.mjs,views.mjs,demo-gateway.mjs,fixtures.mjs,contact-time.mjs,styles.css,fonts.css,fundo-conversas.png,montserrat-400.ttf,montserrat-700.ttf,montserrat-800.ttf} site/ChatBoot/interface/
           test -s site/index.html
           test -s site/ChatBoot/interface/index.html
       - name: Empacotar demonstração
