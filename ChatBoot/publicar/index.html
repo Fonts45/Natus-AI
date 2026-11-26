@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#215037">
+  <title>Natus · Atendimento Natu Vale</title>
+  <link rel="icon" href="./assets/marca/favicon-natu-vale-circular.svg?v=3" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/fonts.css">
+  <link rel="stylesheet" href="./css/styles.css">
+  <script defer src="./js/contact-time.js"></script>
+  <script defer src="./js/fixtures.js"></script>
+  <script defer src="./js/demo-gateway.js"></script>
+  <script defer src="./js/views.js"></script>
+  <script defer src="./js/app.js"></script>
+</head>
+<body>
+  <div class="app" id="app" data-view="list">
+    <nav class="rail" aria-label="Navegação do Natus">
+      <a class="brand-symbol" href="./index.html" aria-label="Natus — início"><img src="./assets/marca/logo-carregamento.svg" alt="" width="34" height="37"></a>
+      <div class="rail-links">
+        <button class="rail-button" type="button" data-nav="inbox" data-icon="chat" title="Caixa de entrada" aria-label="Caixa de entrada" aria-current="page"></button>
+        <button class="rail-button" type="button" data-nav="archived" data-icon="archive" title="Arquivadas" aria-label="Arquivadas"></button>
+        <button class="rail-button" type="button" data-nav="settings" data-icon="settings" title="Preferências" aria-label="Preferências"></button>
+      </div>
+      <button class="rail-button theme" id="theme" type="button" data-icon="moon" aria-label="Ativar modo escuro" title="Alternar tema"></button>
+      <button class="profile" id="profile" type="button" aria-label="Perfil da equipe" title="Perfil da equipe">NV</button>
+    </nav>
+
+    <aside class="inbox" aria-label="Lista de conversas">
+      <div class="inbox-top">
+        <div class="inbox-title">
+          <div><p class="product-name">Natus <span>·</span> Natu Vale Confecções</p><h1 id="inbox-title">Atendimento</h1></div>
+          <div class="inbox-actions">
+            <span data-icon="more" aria-hidden="true"></span>
+            <button class="button icon-button new-chat" type="button" id="new-chat" data-icon="plus" aria-label="Nova conversa" title="Nova conversa"></button>
+          </div>
+        </div>
+        <label class="search" for="search"><span data-icon="search" aria-hidden="true"></span><input id="search" type="search" aria-label="Buscar conversas" placeholder="Buscar conversas" autocomplete="off"></label>
+        <div class="filters" id="filters" role="group" aria-label="Filtrar conversas">
+          <button type="button" data-filter="all" aria-pressed="true">Todas</button>
+          <button type="button" data-filter="unread" aria-pressed="false">Não lidas</button>
+          <button type="button" data-filter="favorite" aria-pressed="false">Favoritas</button>
+        </div>
+      </div>
+      <div class="queue" id="queue"></div>
+      <footer class="inbox-footer"><span class="demo-dot" aria-hidden="true"></span> Demonstração <span aria-hidden="true">·</span> Dados fictícios</footer>
+    </aside>
+
+    <main class="conversation" aria-label="Conversa">
+      <header class="conversation-head" id="conversation-head" hidden>
+        <button class="button icon-button back" type="button" id="back" data-icon="back" aria-label="Voltar para conversas"></button>
+        <div class="contact" id="contact"></div>
+        <div class="conversation-actions">
+          <button class="button icon-button" type="button" id="thread-search-toggle" data-icon="search" aria-label="Buscar na conversa" aria-expanded="false" aria-controls="thread-search" title="Buscar na conversa"></button>
+          <button class="button icon-button" type="button" id="info" data-icon="info" aria-label="Detalhes da conversa" title="Detalhes da conversa"></button>
+          <details class="dropdown" id="thread-menu">
+            <summary class="button icon-button" data-icon="more" aria-label="Mais ações" title="Mais ações"></summary>
+            <div class="menu" id="thread-actions"></div>
+          </details>
+        </div>
+      </header>
+      <div class="thread-search" id="thread-search" hidden>
+        <label class="search" for="find-message"><span data-icon="search" aria-hidden="true"></span><input type="search" id="find-message" aria-label="Buscar mensagens" placeholder="Buscar mensagens" autocomplete="off"></label>
+        <span id="search-result" role="status"></span>
+      </div>
+      <div class="conversation-stage">
+        <div class="workspace-empty" id="workspace-empty" hidden>
+          <img src="./assets/marca/logo-natu-vale.png" alt="" width="64" height="69">
+          <h2>Selecione uma conversa</h2>
+          <p>O histórico e as ferramentas de atendimento aparecem aqui.</p>
+        </div>
+        <div class="timeline" id="timeline" role="log" aria-label="Histórico de mensagens" tabindex="0"></div>
+      </div>
+      <footer class="conversation-foot" id="conversation-foot" hidden>
+        <div class="reply-strip" id="replies" aria-label="Respostas rápidas">
+          <span>Atalhos</span>
+          <button type="button" data-reply="Olá! Como podemos ajudar?">Saudação</button>
+          <button type="button" data-reply="Para preparar a proposta, pode informar a quantidade e a data desejada?">Pedir informações</button>
+          <button type="button" data-reply="Obrigada pelo contato. Seguimos à disposição!">Agradecer</button>
+        </div>
+        <form id="composer" class="composer">
+          <div class="pending-attachment" id="pending-attachment" hidden></div>
+          <details class="dropdown composer-dropdown" id="composer-tools">
+            <summary class="button icon-button" data-icon="plus" aria-label="Adicionar à mensagem" title="Adicionar à mensagem"></summary>
+            <div class="menu composer-menu">
+              <button id="attach" type="button" data-icon="clip">Anexar arquivo</button>
+              <div class="emoji-list" role="group" aria-label="Emojis">
+                <button type="button" data-emoji="😊" aria-label="Sorriso">😊</button><button type="button" data-emoji="👍" aria-label="Positivo">👍</button><button type="button" data-emoji="🙏" aria-label="Agradecimento">🙏</button><button type="button" data-emoji="💚" aria-label="Coração verde">💚</button>
+              </div>
+            </div>
+          </details>
+          <input id="attachment" type="file" hidden>
+          <textarea id="message" aria-label="Escrever mensagem" placeholder="Escreva uma mensagem" rows="1" maxlength="4096"></textarea>
+          <button class="button icon-button send" type="submit" data-icon="send" aria-label="Enviar mensagem" title="Enviar mensagem"></button>
+        </form>
+      </footer>
+    </main>
+  </div>
+  <dialog class="dialog" id="dialog" aria-labelledby="dialog-title">
+    <header><h2 id="dialog-title"></h2><button class="button icon-button" id="close-dialog" type="button" data-icon="close" aria-label="Fechar"></button></header>
+    <div id="dialog-body"></div>
+  </dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

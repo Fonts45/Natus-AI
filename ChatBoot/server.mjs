@@ -74,20 +74,25 @@ for (const admin of admins) {
 const sessions = new Map();
 const attempts = new Map();
 const page = readFileSync(new URL('./painel/index.html', import.meta.url));
-const brandAssets = new Map([
-  ['/assets/favicon-natu-vale-circular.svg', 'image/svg+xml'],
-  ['/assets/logo-natu-vale.png', 'image/png'],
-  ['/assets/logo-carregamento.svg', 'image/svg+xml'],
-]);
+const publicDemo = new URL('./publicar/', import.meta.url);
+const brandAssets = [
+  ['favicon-natu-vale-circular.svg', 'image/svg+xml'],
+  ['logo-natu-vale.png', 'image/png'],
+  ['logo-carregamento.svg', 'image/svg+xml'],
+];
 const interfaceFiles = new Map([
   ['/interface/', ['index.html', 'text/html; charset=utf-8']],
-  ['/interface/styles.css', ['styles.css', 'text/css; charset=utf-8']],
-  ['/interface/fonts.css', ['fonts.css', 'text/css; charset=utf-8']],
-  ['/interface/fundo-conversas.png', ['fundo-conversas.png', 'image/png']],
-  ...[400, 700, 800].map(weight =>
-    [`/interface/montserrat-${weight}.ttf`, [`montserrat-${weight}.ttf`, 'font/ttf']]),
-  ...['app.mjs', 'views.mjs', 'demo-gateway.mjs', 'fixtures.mjs', 'contact-time.mjs'].map(name =>
-    [`/interface/${name}`, [name, 'text/javascript; charset=utf-8']]),
+  ...[
+    ['index.html', 'text/html; charset=utf-8'],
+    ['css/styles.css', 'text/css; charset=utf-8'],
+    ['css/fonts.css', 'text/css; charset=utf-8'],
+    ['assets/imagens/fundo-conversas.png', 'image/png'],
+    ...[400, 700, 800].map(weight => [`assets/fontes/montserrat-${weight}.ttf`, 'font/ttf']),
+    ...['app', 'views', 'demo-gateway', 'fixtures', 'contact-time'].map(name =>
+      [`js/${name}.js`, 'text/javascript; charset=utf-8']),
+    ...brandAssets.map(([name, mime]) => [`assets/marca/${name}`, mime]),
+  ].map(([file, mime]) => [`/interface/${file}`, [file, mime]]),
+  ...brandAssets.map(([name, mime]) => [`/assets/${name}`, [`assets/marca/${name}`, mime]]),
 ]);
 const now = Date.now;
 const get = id => db.prepare('SELECT * FROM chats WHERE id = ?').get(id);
@@ -340,13 +345,8 @@ createServer(async (req, res) => {
     }
     if (req.method === 'GET' && interfaceFiles.has(path.pathname)) {
       const [file, mime] = interfaceFiles.get(path.pathname);
-      const body = readFileSync(new URL(`./interface/${file}`, import.meta.url));
+      const body = readFileSync(new URL(file, publicDemo));
       res.writeHead(200, { 'Content-Type': mime });
-      return res.end(body);
-    }
-    if (req.method === 'GET' && brandAssets.has(path.pathname)) {
-      const body = readFileSync(new URL(`.${path.pathname}`, import.meta.url));
-      res.writeHead(200, { 'Content-Type': brandAssets.get(path.pathname) });
       return res.end(body);
     }
     if (req.method === 'GET' && path.pathname === '/') {

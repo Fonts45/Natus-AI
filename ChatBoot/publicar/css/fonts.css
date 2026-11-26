@@ -1,18 +1,18 @@
 @font-face {
   font-family: Montserrat;
-  src: url("./montserrat-400.ttf") format("truetype");
+  src: url("../assets/fontes/montserrat-400.ttf") format("truetype");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
   font-family: Montserrat;
-  src: url("./montserrat-700.ttf") format("truetype");
+  src: url("../assets/fontes/montserrat-700.ttf") format("truetype");
   font-weight: 700;
   font-display: swap;
 }
 @font-face {
   font-family: Montserrat;
-  src: url("./montserrat-800.ttf") format("truetype");
+  src: url("../assets/fontes/montserrat-800.ttf") format("truetype");
   font-weight: 800;
   font-display: swap;
 }

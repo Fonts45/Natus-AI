@@ -87,13 +87,15 @@ button, summary { transition: background-color .18s ease, color .18s ease, borde
 .inbox-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
 .product-name { font-size: .8125rem; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
 .product-name span { padding-inline: .15em; }
-.inbox-title h1 { color: var(--heading); font: 700 clamp(1.9rem, 3vw, 2.35rem)/1 var(--heading-font); }
+.inbox-title h1 { color: var(--heading); font: 700 clamp(1.65rem, 3vw, 2.2rem)/1 var(--heading-font); }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 42px; padding: .45rem .85rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--heading); font-weight: 700; }
 .button:hover { background: var(--soft); }
 .icon-button { padding: 0; width: 42px; height: 42px; flex: 0 0 42px; }
-.new-chat { background: var(--accent); color: var(--accent-text); border-color: transparent; }
-.new-chat:hover, .send:hover { background: var(--accent); filter: brightness(.92); }
-.search { display: flex; align-items: center; gap: .55rem; padding: 0 .8rem; background: var(--soft); border: 1px solid var(--border); border-radius: 12px; color: var(--muted); }
+.inbox-actions { display: flex; flex: none; align-items: center; gap: 4px; color: var(--muted); }
+.new-chat { border-color: transparent; border-radius: 50%; background: #000; color: #fff; }
+.new-chat:hover { background: #242424; }
+.send:hover { background: var(--accent); filter: brightness(.92); }
+.search { display: flex; align-items: center; gap: .55rem; padding: 0 .8rem; background: var(--soft); border: 1px solid var(--border); border-radius: 999px; color: var(--muted); }
 .search input { width: 100%; min-width: 0; min-height: 42px; padding: .4rem 0; color: var(--text); border: 0; background: transparent; outline: none; }
 .search:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }
 .search input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
@@ -175,7 +177,7 @@ button, summary { transition: background-color .18s ease, color .18s ease, borde
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: url("./fundo-conversas.png") repeat center top / clamp(300px, 34vw, 510px) auto;
+  background: url("../assets/imagens/fundo-conversas.png") repeat center top / clamp(300px, 34vw, 510px) auto;
   filter: grayscale(1) brightness(1.06);
   mix-blend-mode: multiply;
   opacity: .62;
@@ -310,6 +312,7 @@ button, summary { transition: background-color .18s ease, color .18s ease, borde
   .reply-strip { padding-inline: .65rem; }
 }
 @media (max-width: 350px) {
+  .inbox-title h1 { font-size: 1.55rem; }
   .profile { display: none; }
   .reply-strip > span { display: none; }
 }
